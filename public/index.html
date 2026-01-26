@@ -22,28 +22,9 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
             background: #fff;
             color: #111;
-            cursor: none;
             overflow-x: hidden;
         }
 
-        /* Custom Cursor */
-        .cursor {
-            width: 20px;
-            height: 20px;
-            border: 1px solid rgba(0,0,0,0.4);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.15s ease, background 0.15s ease;
-            transform: translate(-50%, -50%);
-        }
-
-        .cursor.hover {
-            transform: translate(-50%, -50%) scale(2);
-            background: rgba(0,0,0,0.05);
-            border-color: #111;
-        }
 
         header {
             height: 100vh;
@@ -54,20 +35,50 @@
             position: relative;
         }
 
-        .social {
+        .contact-wrapper {
             position: absolute;
             top: 40px;
             right: 50px;
-            display: flex;
-            gap: 20px;
+            text-align: right;
         }
 
-        .social a {
+        .contact-toggle {
+            font-size: 0.85rem;
+            letter-spacing: 0.15em;
             color: #999;
+            cursor: pointer;
             transition: color 0.3s ease;
         }
 
-        .social a:hover {
+        .contact-toggle:hover {
+            color: #111;
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s ease, opacity 0.4s ease;
+        }
+
+        .contact-links.open {
+            max-height: 100px;
+            opacity: 1;
+        }
+
+        .contact-links a {
+            font-size: 0.8rem;
+            color: #666;
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+
+        .contact-links a:hover {
             color: #111;
         }
 
@@ -269,14 +280,6 @@
             header h1 {
                 font-size: 2.5rem;
             }
-
-            body {
-                cursor: auto;
-            }
-
-            .cursor {
-                display: none;
-            }
         }
 
         @media (max-width: 600px) {
@@ -292,16 +295,13 @@
     </style>
 </head>
 <body>
-    <div class="cursor" id="cursor"></div>
-
-    <header>
-        <div class="social">
-            <a href="mailto:aguerrechefrancisco@gmail.com" aria-label="Email">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            </a>
-            <a href="https://instagram.com/franaguerreche" target="_blank" rel="noopener" aria-label="Instagram">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
-            </a>
+<header>
+        <div class="contact-wrapper">
+            <span class="contact-toggle" id="contactToggle">Contact</span>
+            <div class="contact-links" id="contactLinks">
+                <a href="mailto:aguerrechefrancisco@gmail.com">aguerrechefrancisco@gmail.com</a>
+                <a href="https://instagram.com/franaguerreche" target="_blank" rel="noopener">@franaguerreche</a>
+            </div>
         </div>
         <h1>Francisco Aguerreche</h1>
     </header>
@@ -376,20 +376,15 @@
     </footer>
 
     <script>
-        // Custom cursor
-        const cursor = document.getElementById('cursor');
+        // Contact toggle
+        const contactToggle = document.getElementById('contactToggle');
+        const contactLinks = document.getElementById('contactLinks');
 
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+        contactToggle.addEventListener('click', () => {
+            contactLinks.classList.toggle('open');
         });
 
         // Cursor hover effect
-        const hoverElements = document.querySelectorAll('.gallery-item, .lightbox-close');
-        hoverElements.forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-        });
 
         // Lightbox
         const images = document.querySelectorAll('.gallery-item img');
