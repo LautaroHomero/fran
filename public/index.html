@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Franciso Aguerreche</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: #fff;
+            color: #111;
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(0,0,0,0.4);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease, background 0.15s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .cursor.hover {
+            transform: translate(-50%, -50%) scale(2);
+            background: rgba(0,0,0,0.05);
+            border-color: #111;
+        }
+
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .social {
+            position: absolute;
+            top: 40px;
+            right: 50px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .social a {
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .social a:hover {
+            color: #111;
+        }
+
+        header h1 {
+            font-family: "Diatype Variable", sans-serif;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 4rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeUp 1.2s ease forwards;
+        }
+
+        header p {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            color: #666;
+            opacity: 0;
+            animation: fadeUp 1.2s ease 0.3s forwards;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeUp 1.2s ease 0.6s forwards;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            color: #444;
+        }
+
+        .scroll-indicator .line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, #111, transparent);
+            animation: scrollLine 1.5s ease infinite;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scrollLine {
+            0% { transform: scaleY(0); transform-origin: top; }
+            50% { transform: scaleY(1); transform-origin: top; }
+            50.1% { transform-origin: bottom; }
+            100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+
+        .gallery {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 40px 150px;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .gallery-item {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.15);
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .gallery-item:hover::after {
+            opacity: 0;
+        }
+
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .gallery-item:hover img,
+        .gallery-item:hover video {
+            transform: scale(1.08);
+        }
+
+        /* Grid layout variations */
+        .gallery-item:nth-child(1) { grid-column: span 8; grid-row: span 2; }
+        .gallery-item:nth-child(2) { grid-column: span 4; }
+        .gallery-item:nth-child(3) { grid-column: span 4; }
+        .gallery-item:nth-child(4) { grid-column: span 6; }
+        .gallery-item:nth-child(5) { grid-column: span 6; }
+        .gallery-item:nth-child(6) { grid-column: span 4; }
+        .gallery-item:nth-child(7) { grid-column: span 4; }
+        .gallery-item:nth-child(8) { grid-column: span 4; }
+        .gallery-item:nth-child(9) { grid-column: span 12; max-height: 70vh; }
+        .gallery-item:nth-child(10) { grid-column: span 5; }
+        .gallery-item:nth-child(11) { grid-column: span 7; }
+        .gallery-item:nth-child(12) { grid-column: span 4; }
+        .gallery-item:nth-child(13) { grid-column: span 8; }
+        .gallery-item:nth-child(14) { grid-column: span 12; max-height: 80vh; }
+        .gallery-item:nth-child(15) { grid-column: span 6; }
+        .gallery-item:nth-child(16) { grid-column: span 6; }
+        .gallery-item:nth-child(17) { grid-column: span 7; }
+        .gallery-item:nth-child(18) { grid-column: span 5; }
+        .gallery-item:nth-child(19) { grid-column: span 12; }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.97);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            transform: scale(0.9);
+            transition: transform 0.4s ease;
+        }
+
+        .lightbox.active img {
+            transform: scale(1);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 40px;
+            right: 50px;
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .lightbox-close:hover {
+            opacity: 1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 80px 40px;
+            font-size: 0.75rem;
+            color: #999;
+            letter-spacing: 0.15em;
+        }
+
+
+        @media (max-width: 1024px) {
+            .gallery {
+                grid-template-columns: repeat(6, 1fr);
+                padding: 0 20px 100px;
+            }
+
+            .gallery-item:nth-child(n) {
+                grid-column: span 6;
+            }
+
+            .gallery-item:nth-child(2),
+            .gallery-item:nth-child(3),
+            .gallery-item:nth-child(6),
+            .gallery-item:nth-child(7),
+            .gallery-item:nth-child(8) {
+                grid-column: span 3;
+            }
+
+            header h1 {
+                font-size: 2.5rem;
+            }
+
+            body {
+                cursor: auto;
+            }
+
+            .cursor {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .gallery-item:nth-child(n) {
+                grid-column: span 6;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+                letter-spacing: 0.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor" id="cursor"></div>
+
+    <header>
+        <div class="social">
+            <a href="mailto:aguerrechefrancisco@gmail.com" aria-label="Email">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </a>
+            <a href="https://instagram.com/franaguerreche" target="_blank" rel="noopener" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </a>
+        </div>
+        <h1>Francisco Aguerreche</h1>
+    </header>
+
+    <main class="gallery">
+        <div class="gallery-item">
+            <img src="images/08032025-A002100-R1-05-6A-1.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/922713.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/914316.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/8123-tiff10-Editar-5.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/914329.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/882612.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/965112.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/965120.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <video src="images/Cut Cali Super 8 Web Portfolio.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <div class="gallery-item">
+            <img src="images/965124.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/000010230018.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/965122-Edit.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/08032025-A002101-R1-21-22-4.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/000010250027-Edit.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/965030.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/914225.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/965027.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/8123-tiff3-3.jpg" alt="">
+        </div>
+        <div class="gallery-item">
+            <img src="images/28032025-317713.jpg" alt="">
+        </div>
+    </main>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <img src="" alt="" id="lightbox-img">
+    </div>
+
+    <footer>
+        &copy; 2025 Francisco Aguerreche
+    </footer>
+
+    <script>
+        // Custom cursor
+        const cursor = document.getElementById('cursor');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Cursor hover effect
+        const hoverElements = document.querySelectorAll('.gallery-item, .lightbox-close');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Lightbox
+        const images = document.querySelectorAll('.gallery-item img');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.querySelector('.lightbox-close');
+
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        const closeLightbox = () => {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeLightbox();
+        });
+    </script>
+</body>
+</html>
